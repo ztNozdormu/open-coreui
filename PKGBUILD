@@ -15,6 +15,6 @@ sha256sums_x86_64=('SKIP')
 sha256sums_aarch64=('SKIP')
 
 package() {
-  # Extract deb package
+  ar x "Open.CoreUI.Desktop_${pkgver}_${CARCH/x86_64/amd64}.deb"
   tar -xf data.tar.gz -C "${pkgdir}"
 }
