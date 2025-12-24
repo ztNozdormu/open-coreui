@@ -89,3 +89,8 @@ For detailed configuration options and environment variables, see [CLI Documenta
 
 - [open-webui](https://github.com/open-webui/open-webui) - The original awesome project
 - [knox](https://github.com/knoxchat) - The original author of the Rust backend stopped open-sourcing the [backend](https://github.com/knoxchat/open-webui-rust)(MIT) for [certain reasons](https://github.com/xxnuo/open-coreui/discussions/8), but he completed most of the foundational backend conversion work, for which I am deeply grateful for knox's contributions.
+
+## 注意本地开发事项
+1. 前端需要先 
+2. npm install 一下依赖包，然后 npm run build 生成build文件目录
+3. cargo build(static_files.rs做了兜底) 或者 cargo build --features embed-frontend

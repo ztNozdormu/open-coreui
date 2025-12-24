@@ -1,6 +1,6 @@
 use actix_web::{HttpRequest, HttpResponse};
 use mime_guess::from_path;
-
+use rust_embed::EmbeddedFile;
 #[cfg(feature = "embed-frontend")]
 use rust_embed::RustEmbed;
 
@@ -18,6 +18,23 @@ use rust_embed::RustEmbed;
 #[derive(RustEmbed)]
 #[folder = "../frontend/build/"]
 pub struct FrontendAssets;
+
+// /// 默认兜底实现，否则不带条件编译操作会有问题 【function or associated item not found in `FrontendAssets`】
+// impl FrontendAssets {
+//     pub fn get(path: &str) -> Option<EmbeddedFile> {
+//         #[cfg(feature = "embed-frontend")]
+//         {
+//             <Self as RustEmbed>::get(path)
+//         }
+//
+//         #[cfg(not(feature = "embed-frontend"))]
+//         {
+//             let _ = path;
+//             None
+//         }
+//     }
+// }
+
 
 // Dummy struct for slim build (no embedded frontend)
 #[cfg(not(feature = "embed-frontend"))]

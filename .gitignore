@@ -4,6 +4,7 @@
 *.pdb
 Cargo.lock
 
+backend/target/
 # Environment
 .env
 .env.local
