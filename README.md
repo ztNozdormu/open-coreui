@@ -87,6 +87,7 @@ For detailed configuration options and environment variables, see [CLI Documenta
 
 ## Thanks
 
+
 - [open-webui](https://github.com/open-webui/open-webui) - The original awesome project
 - [knox](https://github.com/knoxchat) - The original author of the Rust backend stopped open-sourcing the [backend](https://github.com/knoxchat/open-webui-rust)(MIT) for [certain reasons](https://github.com/xxnuo/open-coreui/discussions/8), but he completed most of the foundational backend conversion work, for which I am deeply grateful for knox's contributions.
 
