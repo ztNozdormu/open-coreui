@@ -35,7 +35,6 @@ pub struct FrontendAssets;
 //     }
 // }
 
-
 // Dummy struct for slim build (no embedded frontend)
 #[cfg(not(feature = "embed-frontend"))]
 pub struct FrontendAssets;

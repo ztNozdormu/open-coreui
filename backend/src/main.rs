@@ -54,7 +54,12 @@ pub struct AppState {
 #[actix_web::main]
 async fn main() -> anyhow::Result<()> {
     // Initialize logging
-    dotenvy::dotenv().ok();
+    // dotenvy::dotenv().ok();
+    // 显式加载项目目录下 .env
+    dotenvy::from_path("E:/opso-worspace/mountlab/open-coreui/backend/.env")?;
+
+    println!("OPENAI_API_KEY={:?}", std::env::var("OPENAI_API_KEY"));
+    println!("OPENAI_API_KEYS={:?}", std::env::var("OPENAI_API_KEYS"));
 
     let log_level = std::env::var("RUST_LOG")
         .unwrap_or_else(|_| "info".to_string())
@@ -507,15 +512,18 @@ async fn main() -> anyhow::Result<()> {
     let addr = SocketAddr::from((config.host.parse::<std::net::IpAddr>()?, config.port));
     let cors_allow_origin = config.cors_allow_origin.clone();
     let enable_random_port = config.enable_random_port;
-    
+
     // Check if static directory exists
     let static_dir = config.static_dir.clone();
     let static_dir_exists = std::path::Path::new(&static_dir).exists();
-    
+
     if static_dir_exists {
         info!("📁 Using external static files directory: {}", static_dir);
     } else {
-        info!("📁 External static directory not found ({}), using embedded static files", static_dir);
+        info!(
+            "📁 External static directory not found ({}), using embedded static files",
+            static_dir
+        );
     }
 
     // Display user-friendly address (replace 0.0.0.0 with localhost for display)
@@ -524,11 +532,17 @@ async fn main() -> anyhow::Result<()> {
     } else {
         &config.host
     };
-    
+
     if enable_random_port {
-        info!("🚀 Starting server with random port on host: {}", display_host);
+        info!(
+            "🚀 Starting server with random port on host: {}",
+            display_host
+        );
     } else {
-        info!("🚀 Server running at http://{}:{}", display_host, config.port);
+        info!(
+            "🚀 Server running at http://{}:{}",
+            display_host, config.port
+        );
     }
 
     let server = HttpServer::new(move || {
@@ -665,31 +679,38 @@ async fn main() -> anyhow::Result<()> {
     .client_request_timeout(std::time::Duration::from_secs(300));
 
     let server = server.bind(addr)?;
-    
+
     // If random port is enabled, get the actual assigned port
     if enable_random_port {
         let addrs = server.addrs();
-        let actual_addr = addrs.first()
+        let actual_addr = addrs
+            .first()
             .ok_or_else(|| anyhow::anyhow!("Failed to get server address"))?;
         let display_host = if config.host == "0.0.0.0" {
             "localhost"
         } else {
             &config.host
         };
-        info!("🚀 Server running at http://{}:{}", display_host, actual_addr.port());
+        info!(
+            "🚀 Server running at http://{}:{}",
+            display_host,
+            actual_addr.port()
+        );
     }
-    
+
     server.run().await?;
 
     Ok(())
 }
 
 // Serve default user avatar
-async fn serve_user_avatar(state: web::Data<AppState>) -> Result<HttpResponse, crate::error::AppError> {
+async fn serve_user_avatar(
+    state: web::Data<AppState>,
+) -> Result<HttpResponse, crate::error::AppError> {
     let config = state.config.read().unwrap();
     let static_dir = &config.static_dir;
     let user_avatar_path = std::path::Path::new(static_dir).join("user.png");
-    
+
     // Try external file first
     if user_avatar_path.exists() {
         if let Ok(image_data) = std::fs::read(&user_avatar_path) {
@@ -698,7 +719,7 @@ async fn serve_user_avatar(state: web::Data<AppState>) -> Result<HttpResponse, c
                 .body(image_data));
         }
     }
-    
+
     // Fall back to embedded file
     use crate::static_files::FrontendAssets;
     if let Some(content) = FrontendAssets::get("static/user.png") {
@@ -706,8 +727,10 @@ async fn serve_user_avatar(state: web::Data<AppState>) -> Result<HttpResponse, c
             .content_type("image/png")
             .body(content.data.into_owned()));
     }
-    
-    Err(crate::error::AppError::NotFound("User avatar not found".to_string()))
+
+    Err(crate::error::AppError::NotFound(
+        "User avatar not found".to_string(),
+    ))
 }
 
 // Serve favicon
@@ -715,7 +738,7 @@ async fn serve_favicon(state: web::Data<AppState>) -> Result<HttpResponse, crate
     let config = state.config.read().unwrap();
     let static_dir = &config.static_dir;
     let favicon_path = std::path::Path::new(static_dir).join("favicon.png");
-    
+
     // Try external file first
     if favicon_path.exists() {
         if let Ok(image_data) = std::fs::read(&favicon_path) {
@@ -724,7 +747,7 @@ async fn serve_favicon(state: web::Data<AppState>) -> Result<HttpResponse, crate
                 .body(image_data));
         }
     }
-    
+
     // Fall back to embedded file
     use crate::static_files::FrontendAssets;
     if let Some(content) = FrontendAssets::get("static/favicon.png") {
@@ -732,8 +755,10 @@ async fn serve_favicon(state: web::Data<AppState>) -> Result<HttpResponse, crate
             .content_type("image/png")
             .body(content.data.into_owned()));
     }
-    
-    Err(crate::error::AppError::NotFound("Favicon not found".to_string()))
+
+    Err(crate::error::AppError::NotFound(
+        "Favicon not found".to_string(),
+    ))
 }
 
 // Health check endpoints

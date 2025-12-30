@@ -268,7 +268,7 @@ impl Config {
             } else {
                 env::var("HOME")
             };
-            
+
             if let Ok(home) = home {
                 return path.replacen("~", &home, 1);
             }
@@ -308,6 +308,23 @@ impl Config {
                 .parse()
                 .unwrap_or(8168)
         };
+
+        println!(
+            "OPENAI_API_KEY={:?} config",
+            std::env::var("OPENAI_API_KEY")
+        );
+        println!(
+            "OPENAI_API_KEYS={:?} config",
+            std::env::var("OPENAI_API_KEYS")
+        );
+        println!(
+            "OPENAI_API_BASE_URL={:?} config",
+            std::env::var("OPENAI_API_BASE_URL")
+        );
+        println!(
+            "OPENAI_API_BASE_URLS={:?} config",
+            std::env::var("OPENAI_API_BASE_URLS")
+        );
 
         Ok(Config {
             // Server
@@ -380,11 +397,10 @@ impl Config {
                 .unwrap_or_else(|_| "true".to_string())
                 .parse()
                 .unwrap_or(true),
-            webui_url: env::var("WEBUI_URL")
-                .unwrap_or_else(|_| {
-                    let port = if enable_random_port { 0 } else { port };
-                    format!("http://localhost:{}", port)
-                }),
+            webui_url: env::var("WEBUI_URL").unwrap_or_else(|_| {
+                let port = if enable_random_port { 0 } else { port };
+                format!("http://localhost:{}", port)
+            }),
             pending_user_overlay_title: env::var("PENDING_USER_OVERLAY_TITLE").ok(),
             pending_user_overlay_content: env::var("PENDING_USER_OVERLAY_CONTENT").ok(),
             response_watermark: env::var("RESPONSE_WATERMARK").ok(),
@@ -516,40 +532,46 @@ impl Config {
             openai_api_base_url: env::var("OPENAI_API_BASE_URL")
                 .unwrap_or_else(|_| "https://api.openai.com/v1".to_string()),
             openai_api_key: env::var("OPENAI_API_KEY").unwrap_or_default(),
-            openai_api_base_urls: {
-                let urls_str = env::var("OPENAI_API_BASE_URLS")
-                    .or_else(|_| env::var("OPENAI_API_BASE_URL"))
-                    .unwrap_or_default();
+            // openai_api_base_urls: {
+            //     let urls_str = env::var("OPENAI_API_BASE_URLS")
+            //         .or_else(|_| env::var("OPENAI_API_BASE_URL"))
+            //         .unwrap_or_default();
+            //
+            //     if urls_str.is_empty() {
+            //         // No URLs configured - return empty vec
+            //         vec![]
+            //     } else {
+            //         urls_str
+            //             .split(';')
+            //             .filter_map(|s| {
+            //                 let trimmed = s.trim();
+            //                 if trimmed.is_empty() {
+            //                     None
+            //                 } else {
+            //                     Some(trimmed.to_string())
+            //                 }
+            //             })
+            //             .collect()
+            //     }
+            // },
+            // openai_api_keys: {
+            //     let keys_str = env::var("OPENAI_API_KEYS")
+            //         .or_else(|_| env::var("OPENAI_API_KEY"))
+            //         .unwrap_or_default();
+            //
+            //     if keys_str.is_empty() {
+            //         // No keys configured - return empty vec
+            //         vec![]
+            //     } else {
+            //         keys_str.split(';').map(|s| s.trim().to_string()).collect()
+            //     }
+            // },
+            openai_api_base_urls: Self::resolve_multi_or_single_env(
+                "OPENAI_API_BASE_URLS",
+                "OPENAI_API_BASE_URL",
+            ),
 
-                if urls_str.is_empty() {
-                    // No URLs configured - return empty vec
-                    vec![]
-                } else {
-                    urls_str
-                        .split(';')
-                        .filter_map(|s| {
-                            let trimmed = s.trim();
-                            if trimmed.is_empty() {
-                                None
-                            } else {
-                                Some(trimmed.to_string())
-                            }
-                        })
-                        .collect()
-                }
-            },
-            openai_api_keys: {
-                let keys_str = env::var("OPENAI_API_KEYS")
-                    .or_else(|_| env::var("OPENAI_API_KEY"))
-                    .unwrap_or_default();
-
-                if keys_str.is_empty() {
-                    // No keys configured - return empty vec
-                    vec![]
-                } else {
-                    keys_str.split(';').map(|s| s.trim().to_string()).collect()
-                }
-            },
+            openai_api_keys: Self::resolve_multi_or_single_env("OPENAI_API_KEYS", "OPENAI_API_KEY"),
             openai_api_configs: serde_json::json!({}),
 
             // Audio - TTS
@@ -887,5 +909,27 @@ impl Config {
                 .parse()
                 .unwrap_or(false),
         })
+    }
+
+    fn resolve_multi_or_single_env(multi: &str, single: &str) -> Vec<String> {
+        let multi_val = std::env::var(multi).unwrap_or_default();
+
+        let mut values: Vec<String> = multi_val
+            .split(';')
+            .map(|s| s.trim())
+            .filter(|s| !s.is_empty())
+            .map(String::from)
+            .collect();
+
+        if values.is_empty() {
+            if let Ok(single_val) = std::env::var(single) {
+                let single_val = single_val.trim();
+                if !single_val.is_empty() {
+                    values.push(single_val.to_string());
+                }
+            }
+        }
+
+        values
     }
 }

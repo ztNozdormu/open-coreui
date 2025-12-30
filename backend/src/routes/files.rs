@@ -147,7 +147,7 @@ async fn upload_file(
     let config = state.config.read().unwrap();
     let upload_dir = std::path::PathBuf::from(&config.upload_dir);
     drop(config);
-    
+
     // Create upload directory if it doesn't exist
     std::fs::create_dir_all(&upload_dir)
         .map_err(|e| AppError::BadRequest(format!("Failed to create upload directory: {}", e)))?;

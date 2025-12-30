@@ -228,14 +228,14 @@ async fn get_user_profile_image(
     let config = state.config.read().unwrap();
     let static_dir = &config.static_dir;
     let user_avatar_path = std::path::Path::new(static_dir).join("user.png");
-    
+
     // Try external file first
     if let Ok(image_data) = std::fs::read(&user_avatar_path) {
         return Ok(HttpResponse::Ok()
             .content_type("image/png")
             .body(image_data));
     }
-    
+
     // Fall back to embedded file
     use crate::static_files::FrontendAssets;
     if let Some(content) = FrontendAssets::get("static/user.png") {
@@ -243,7 +243,7 @@ async fn get_user_profile_image(
             .content_type("image/png")
             .body(content.data.into_owned()));
     }
-    
+
     Err(crate::error::AppError::NotFound(
         "Default avatar not found".to_string(),
     ))

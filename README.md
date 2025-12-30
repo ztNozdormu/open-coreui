@@ -95,3 +95,34 @@ For detailed configuration options and environment variables, see [CLI Documenta
 1. 前端需要先 
 2. npm install 一下依赖包，然后 npm run build 生成build文件目录
 3. cargo build(static_files.rs做了兜底) 或者 cargo build --features embed-frontend
+
+## 正式打包命令
+cd backend
+cargo build --release --features embed-frontend
+
+cd frontend
+npm install
+npm run build
+
+根目录创建bin目录
+mkdir bin
+cp backend/target/release/open-webui-rust.exe \
+src-tauri/artifacts/build-x86_64-pc-windows-msvc/open-coreui-x86_64-pc-windows-msvc.exe
+
+cd src-tauri
+$env:TAURI_SIGNING_PRIVATE_KEY=""  # 暂时忽略签名，
+
+注意: tauri.conf.json中需要配置updater插件,忽略前面先去掉pubkey
+"plugins": {
+"updater": {
+"pubkey": "",
+"endpoints": [
+"https://github.com/xxnuo/open-coreui/releases/latest/download/latest.json"
+]
+}
+}
+todo 后续补充验签key
+
+最后构建：
+cargo tauri build --target x86_64-pc-windows-msvc  
+

@@ -5,6 +5,8 @@
 Cargo.lock
 
 backend/target/
+backend/data.sqlite3
+ backend/.env
 # Environment
 .env
 .env.local

@@ -188,15 +188,16 @@ async fn handle_socket_packet(
             // Check if client sent auth data and authenticate immediately
             if let Some(ref auth_data) = packet.data {
                 tracing::debug!("Auth data received during CONNECT: {:?}", auth_data);
-                
+
                 // Try to authenticate user with the auth data
                 if let Some(auth_obj) = auth_data.get("auth") {
                     if let Some(token) = auth_obj.get("token").and_then(|t| t.as_str()) {
                         tracing::info!("Authenticating user during CONNECT with token");
-                        
+
                         // Authenticate with backend
-                        let auth_url = format!("{}/api/socketio/auth", event_handler.auth_endpoint());
-                        
+                        let auth_url =
+                            format!("{}/api/socketio/auth", event_handler.auth_endpoint());
+
                         match http_client
                             .post(&auth_url)
                             .json(&serde_json::json!({"token": token}))
@@ -206,24 +207,45 @@ async fn handle_socket_packet(
                             Ok(response) if response.status().is_success() => {
                                 if let Ok(user) = response.json::<serde_json::Value>().await {
                                     // Set session user immediately
-                                    if let Err(e) = event_handler.manager().set_session_user(sid, user.clone()).await {
+                                    if let Err(e) = event_handler
+                                        .manager()
+                                        .set_session_user(sid, user.clone())
+                                        .await
+                                    {
                                         tracing::error!("Failed to set session user: {}", e);
                                     } else {
-                                        let user_id = user.get("id").and_then(|id| id.as_str()).unwrap_or("unknown");
-                                        tracing::info!("User {} authenticated during CONNECT on session {}", user_id, sid);
-                                        
+                                        let user_id = user
+                                            .get("id")
+                                            .and_then(|id| id.as_str())
+                                            .unwrap_or("unknown");
+                                        tracing::info!(
+                                            "User {} authenticated during CONNECT on session {}",
+                                            user_id,
+                                            sid
+                                        );
+
                                         // Update presence
                                         event_handler.presence_manager().user_online(user_id).await;
-                                        
+
                                         // Auto-join user to their channels
-                                        if let Err(e) = event_handler.auto_join_user_channels(sid, user_id).await {
-                                            tracing::warn!("Failed to auto-join user {} to channels: {}", user_id, e);
+                                        if let Err(e) = event_handler
+                                            .auto_join_user_channels(sid, user_id)
+                                            .await
+                                        {
+                                            tracing::warn!(
+                                                "Failed to auto-join user {} to channels: {}",
+                                                user_id,
+                                                e
+                                            );
                                         }
                                     }
                                 }
                             }
                             Ok(response) => {
-                                tracing::warn!("Authentication failed during CONNECT: {}", response.status());
+                                tracing::warn!(
+                                    "Authentication failed during CONNECT: {}",
+                                    response.status()
+                                );
                             }
                             Err(e) => {
                                 tracing::error!("Auth request failed during CONNECT: {}", e);
@@ -415,15 +437,21 @@ pub async fn polling_handler(
                                             // Check if client sent auth data and authenticate immediately
                                             if let Some(ref auth_data) = socket_packet.data {
                                                 tracing::debug!("Auth data received during polling CONNECT: {:?}", auth_data);
-                                                
+
                                                 // Try to authenticate user with the auth data
                                                 if let Some(auth_obj) = auth_data.get("auth") {
-                                                    if let Some(token) = auth_obj.get("token").and_then(|t| t.as_str()) {
+                                                    if let Some(token) = auth_obj
+                                                        .get("token")
+                                                        .and_then(|t| t.as_str())
+                                                    {
                                                         tracing::info!("Authenticating user during polling CONNECT with token");
-                                                        
-                                        // Authenticate with backend
-                                        let auth_url = format!("{}/api/socketio/auth", _handler.auth_endpoint());
-                                                        
+
+                                                        // Authenticate with backend
+                                                        let auth_url = format!(
+                                                            "{}/api/socketio/auth",
+                                                            _handler.auth_endpoint()
+                                                        );
+
                                                         match _http_client
                                                             .post(&auth_url)
                                                             .json(&serde_json::json!({"token": token}))
