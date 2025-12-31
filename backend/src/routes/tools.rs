@@ -1273,7 +1273,7 @@ async fn install_from_library(
           "q": "{{query}}"
         },
         "headers": {
-          "Authorization": "Bearer {{env.API_KEY}}"
+          "Authorization": "Bearer {{.env.API_KEY}}"
         },
         "response": {
           "transform": "Result: {{body.data}}"
@@ -1741,7 +1741,7 @@ async fn get_tool_schema(
                     },
                     "auth_token": {
                         "type": "string",
-                        "description": "Authentication token (supports {{env.VAR}} templates)"
+                        "description": "Authentication token (supports {{.env.VAR}} templates)"
                     }
                 }
             },

@@ -32,7 +32,7 @@ impl TemplateEngine {
             .to_string()
     }
 
-    /// Resolve a variable path (e.g., "params.city", "env.API_KEY", "user.name")
+    /// Resolve a variable path (e.g., "params.city", ".env.API_KEY", "user.name")
     fn resolve_variable(
         &self,
         path: &str,
@@ -58,7 +58,7 @@ impl TemplateEngine {
                     .and_then(|v| self.extract_nested_value(v, &parts[2..]))
                     .unwrap_or_default()
             }
-            "env" => {
+            ".env" => {
                 if parts.len() < 2 {
                     return String::new();
                 }
@@ -180,7 +180,7 @@ mod tests {
         env.insert("API_KEY".to_string(), "secret123".to_string());
 
         let result = engine.render(
-            "Bearer {{env.API_KEY}}",
+            "Bearer {{.env.API_KEY}}",
             &HashMap::new(),
             &env,
             None,
@@ -265,7 +265,7 @@ mod tests {
         env.insert("UNITS".to_string(), "metric".to_string());
 
         let result = engine.render(
-            "Weather for {{params.city}} in {{env.UNITS}} units",
+            "Weather for {{params.city}} in {{.env.UNITS}} units",
             &params,
             &env,
             None,

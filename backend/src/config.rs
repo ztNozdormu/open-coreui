@@ -309,22 +309,22 @@ impl Config {
                 .unwrap_or(8168)
         };
 
-        println!(
-            "OPENAI_API_KEY={:?} config",
-            std::env::var("OPENAI_API_KEY")
-        );
-        println!(
-            "OPENAI_API_KEYS={:?} config",
-            std::env::var("OPENAI_API_KEYS")
-        );
-        println!(
-            "OPENAI_API_BASE_URL={:?} config",
-            std::env::var("OPENAI_API_BASE_URL")
-        );
-        println!(
-            "OPENAI_API_BASE_URLS={:?} config",
-            std::env::var("OPENAI_API_BASE_URLS")
-        );
+        // println!(
+        //     "OPENAI_API_KEY={:?} config",
+        //     std::env::var("OPENAI_API_KEY")
+        // );
+        // println!(
+        //     "OPENAI_API_KEYS={:?} config",
+        //     std::env::var("OPENAI_API_KEYS")
+        // );
+        // println!(
+        //     "OPENAI_API_BASE_URL={:?} config",
+        //     std::env::var("OPENAI_API_BASE_URL")
+        // );
+        // println!(
+        //     "OPENAI_API_BASE_URLS={:?} config",
+        //     std::env::var("OPENAI_API_BASE_URLS")
+        // );
 
         Ok(Config {
             // Server
@@ -533,8 +533,8 @@ impl Config {
                 .unwrap_or_else(|_| "https://api.openai.com/v1".to_string()),
             openai_api_key: env::var("OPENAI_API_KEY").unwrap_or_default(),
             // openai_api_base_urls: {
-            //     let urls_str = env::var("OPENAI_API_BASE_URLS")
-            //         .or_else(|_| env::var("OPENAI_API_BASE_URL"))
+            //     let urls_str = .env::var("OPENAI_API_BASE_URLS")
+            //         .or_else(|_| .env::var("OPENAI_API_BASE_URL"))
             //         .unwrap_or_default();
             //
             //     if urls_str.is_empty() {
@@ -555,8 +555,8 @@ impl Config {
             //     }
             // },
             // openai_api_keys: {
-            //     let keys_str = env::var("OPENAI_API_KEYS")
-            //         .or_else(|_| env::var("OPENAI_API_KEY"))
+            //     let keys_str = .env::var("OPENAI_API_KEYS")
+            //         .or_else(|_| .env::var("OPENAI_API_KEY"))
             //         .unwrap_or_default();
             //
             //     if keys_str.is_empty() {

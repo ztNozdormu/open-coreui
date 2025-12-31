@@ -54,12 +54,12 @@ pub struct AppState {
 #[actix_web::main]
 async fn main() -> anyhow::Result<()> {
     // Initialize logging
-    // dotenvy::dotenv().ok();
-    // 显式加载项目目录下 .env
-    dotenvy::from_path("E:/opso-worspace/mountlab/open-coreui/backend/.env")?;
+    dotenvy::dotenv().ok();
+    // 显式加载项目目录下 ..env
+    // dotenvy::from_path("E:/opso-worspace/mountlab/open-coreui/backend/.env")?;
 
-    println!("OPENAI_API_KEY={:?}", std::env::var("OPENAI_API_KEY"));
-    println!("OPENAI_API_KEYS={:?}", std::env::var("OPENAI_API_KEYS"));
+    // println!("OPENAI_API_KEY={:?}", std::env::var("OPENAI_API_KEY"));
+    // println!("OPENAI_API_KEYS={:?}", std::env::var("OPENAI_API_KEYS"));
 
     let log_level = std::env::var("RUST_LOG")
         .unwrap_or_else(|_| "info".to_string())

@@ -106,8 +106,7 @@ npm run build
 
 根目录创建bin目录
 mkdir bin
-cp backend/target/release/open-webui-rust.exe \
-src-tauri/artifacts/build-x86_64-pc-windows-msvc/open-coreui-x86_64-pc-windows-msvc.exe
+cp backend/target/release/open-webui-rust.exe \ src-tauri/artifacts/build-x86_64-pc-windows-msvc/open-coreui-x86_64-pc-windows-msvc.exe
 
 cd src-tauri
 $env:TAURI_SIGNING_PRIVATE_KEY=""  # 暂时忽略签名，

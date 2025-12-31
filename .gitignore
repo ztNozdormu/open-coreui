@@ -4,6 +4,7 @@
 *.pdb
 Cargo.lock
 
+bin/
 backend/target/
 backend/data.sqlite3
  backend/.env
