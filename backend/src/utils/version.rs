@@ -30,7 +30,7 @@ pub struct VersionInfo {
 #[allow(dead_code)]
 pub async fn check_for_updates(current_version: &str) -> AppResult<VersionInfo> {
     let client = Client::builder()
-        .user_agent("open-webui-rust")
+        .user_agent("open-coreui-aarch64-apple-darwin")
         .timeout(std::time::Duration::from_secs(10))
         .build()?;
 

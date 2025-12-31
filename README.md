@@ -106,10 +106,17 @@ npm run build
 
 根目录创建bin目录
 mkdir bin
+windows:
 cp backend/target/release/open-webui-rust.exe \ src-tauri/artifacts/build-x86_64-pc-windows-msvc/open-coreui-x86_64-pc-windows-msvc.exe
+mac:
+cp backend/target/release/open-webui-rust bin/open-coreui-aarch64-apple-darwin
 
 cd src-tauri
+windows:
 $env:TAURI_SIGNING_PRIVATE_KEY=""  # 暂时忽略签名，
+mac:
+export TAURI_SIGNING_PRIVATE_KEY=""
+export TAURI_SIGNING_PRIVATE_KEY_PASSWORD=""
 
 注意: tauri.conf.json中需要配置updater插件,忽略前面先去掉pubkey
 "plugins": {
@@ -123,5 +130,8 @@ $env:TAURI_SIGNING_PRIVATE_KEY=""  # 暂时忽略签名，
 todo 后续补充验签key
 
 最后构建：
+windows:
 cargo tauri build --target x86_64-pc-windows-msvc  
 
+mac:
+cargo tauri build

@@ -16,7 +16,7 @@ COPY Cargo.toml Cargo.lock ./
 RUN mkdir src && \
     echo "fn main() {}" > src/main.rs && \
     cargo build --release && \
-    rm -rf src target/release/.fingerprint/open-webui-rust-* target/release/open-webui-rust* target/release/deps/open_webui_rust-*
+    rm -rf src target/release/.fingerprint/open-coreui-aarch64-apple-darwin-* target/release/open-coreui-aarch64-apple-darwin* target/release/deps/open_webui_rust-*
 
 # Copy source code
 COPY src ./src
@@ -59,7 +59,7 @@ echo "RUST_LOG: $RUST_LOG"\n\
 export RUST_BACKTRACE=1\n\
 export RUST_LOG=${RUST_LOG:-info}\n\
 echo "Executing binary..."\n\
-/app/open-webui-rust 2>&1 || { echo "Binary exited with code $?"; exit $?; }' > /app/start.sh && chmod +x /app/start.sh
+/app/open-coreui-aarch64-apple-darwin 2>&1 || { echo "Binary exited with code $?"; exit $?; }' > /app/start.sh && chmod +x /app/start.sh
 
 # Expose port
 EXPOSE 8168
